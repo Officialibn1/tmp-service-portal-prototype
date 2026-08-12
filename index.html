@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>TMPL — Project Management Portal</title>
+        <title>Admin/PM Portal</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
             href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
@@ -32,6 +32,7 @@
                 --font-display: "Fraunces", serif;
                 --font-body: "IBM Plex Sans", sans-serif;
                 --font-mono: "IBM Plex Mono", monospace;
+                --ai-max-width: 1024px;
             }
             * {
                 box-sizing: border-box;
@@ -873,6 +874,8 @@
                 font-weight: 600;
             }
             .ai-chat-messages {
+                width: 100%;
+                max-width: var(--ai-max-width);
                 flex: 1;
                 overflow-y: auto;
                 padding-right: 8px;
@@ -880,6 +883,7 @@
                 flex-direction: column;
                 gap: 12px;
                 margin-bottom: 16px;
+                margin: 0 auto;
             }
             .message {
                 max-width: 80%;
@@ -913,13 +917,17 @@
             }
             .ai-chat-input-area {
                 display: flex;
-                gap: 10px;
-                align-items: flex-end;
+                flex-direction: column;
+                gap: 8px;
                 padding-top: 12px;
-                /*border-top: 1px solid var(--line);*/
                 width: 80%;
                 margin: 0 auto;
-                max-width: 750px;
+                max-width: var(--ai-max-width);
+            }
+            .ai-input-row {
+                display: flex;
+                gap: 10px;
+                align-items: flex-end;
             }
             .ai-chat-input-area textarea {
                 flex: 1;
@@ -951,7 +959,7 @@
                 border-top: 1px solid var(--line);
                 width: 80%;
                 margin: 0 auto;
-                max-width: 750px;
+                max-width: var(--ai-max-width);
             }
             .ai-suggestions button {
                 background: var(--paper-deep);
@@ -1036,14 +1044,7 @@
                     radial-gradient(ellipse at 18% 12%, rgba(26, 180, 102, 0.1) 0%, transparent 50%),
                     radial-gradient(ellipse at 82% 88%, rgba(1, 79, 67, 0.08) 0%, transparent 52%);
             }
-            .ai-hero-icon {
-                font-size: 72px;
-                line-height: 1;
-                margin-bottom: 18px;
-                filter: drop-shadow(0 0 18px rgba(26, 180, 102, 0.35));
-                animation: aiFloat 3.5s ease-in-out infinite;
-                display: block;
-            }
+
             @keyframes aiFloat {
                 0%, 100% { transform: translateY(0px); }
                 50%       { transform: translateY(-10px); }
@@ -1143,10 +1144,41 @@
                 align-items: center;
                 gap: 8px;
             }
-            .ai-chat-robot-badge {
-                font-size: 19px;
-                line-height: 1;
-                filter: drop-shadow(0 0 6px rgba(26, 180, 102, 0.4));
+            /* ── AI file upload ── */
+            .ai-file-label {
+                height: 100%;
+                aspect-ratio: 1;
+                border-radius: 7px;
+                border: 1.5px solid var(--line);
+                background: transparent;
+                color: var(--slate);
+                font-size: 17px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                transition: all 0.15s;
+                user-select: none;
+            }
+            .ai-file-label:hover { background: var(--paper-deep); border-color: var(--slate); color: var(--ink); }
+            .ai-file-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: var(--paper-deep);
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                padding: 4px 10px 4px 8px;
+                font-size: 12px;
+                color: var(--slate);
+                margin: 0 6px 6px 0;
+            }
+            .ai-file-chip .rm { cursor: pointer; color: var(--slate-light); font-size: 15px; }
+            .ai-file-chip .rm:hover { color: var(--danger); }
+            .ai-attached-files {
+                padding: 8px 0 0;
+                /*background: var(--card);*/
             }
         </style>
     </head>
@@ -1228,11 +1260,11 @@
                             class="tmp-logo"
                         />
                     </div>
-                    <div class="brand-sub">Project Management Portal</div>
+                    <div class="brand-sub">Admin / PM Portal</div>
                 </div>
                 <nav class="nav" id="navList"></nav>
                 <div class="sidebar-foot">
-                    v0.3 PROTOTYPE — PM DEPT<br />FOR GM REVIEW · 10 AUG
+                    v0.3 PROTOTYPE — Admin/PM DEPT<br />FOR ED REVIEW · AUG 2026
                 </div>
             </aside>
 
@@ -1241,7 +1273,7 @@
                     <div>
                         <div class="page-title" id="pageTitle">Dashboard</div>
                         <div class="page-sub" id="pageSub">
-                            Everything moving through the office, in one portal.
+                            Everything moving through the office, in one ledger.
                         </div>
                     </div>
                     <div class="topbar-right">
@@ -1317,7 +1349,7 @@
             const PAGE_META = {
                 dashboard: {
                     title: "Dashboard",
-                    sub: "Everything moving through the office, in one portal.",
+                    sub: "Everything moving through the office, in one ledger.",
                 },
                 ai: {
                     title: "AI Assistant",
@@ -1461,6 +1493,14 @@
                         urgency: "Normal",
                         status: "pending",
                     },
+                    {
+                        ref: "ITR-2026-0218",
+                        name: "Amaka Obi",
+                        item: "Dell UPS 650VA",
+                        type: "Hardware",
+                        urgency: "Normal",
+                        status: "rejected",
+                    },
                 ],
                 expenses: [
                     {
@@ -1492,7 +1532,7 @@
                     {
                         ref: "HMO-2026-0091",
                         name: "Bisi Lawal",
-                        type: "Add dependant — spouse",
+                        type: "Add Dependant",
                         detail: "Lawal, F. (Spouse)",
                         status: "approved",
                     },
@@ -1502,6 +1542,20 @@
                         type: "New enrolment",
                         detail: "Standard plan",
                         status: "pending",
+                    },
+                    {
+                        ref: "HMO-2026-0083",
+                        name: "Femi Bello",
+                        type: "Support / Loan Request",
+                        detail: "₦150,000 — medical emergency (self)",
+                        status: "approved",
+                    },
+                    {
+                        ref: "HMO-2026-0079",
+                        name: "Amaka Obi",
+                        type: "Support / Loan Request",
+                        detail: "₦200,000 — dental procedure (spouse)",
+                        status: "rejected",
                     },
                 ],
                 reports: [
@@ -1752,7 +1806,7 @@
       </div>
     </div>
     <div class="panel">
-      <div class="panel-head"><div><h3>Recent activity</h3><div class="hint">Latest movements across the portal</div></div></div>
+      <div class="panel-head"><div><h3>Recent activity</h3><div class="hint">Latest movements across the ledger</div></div></div>
       <div class="panel-body">
         ${activityFeed()}
       </div>
@@ -1924,8 +1978,13 @@
                 </div>
 
                 <div class="ai-chat-input-area">
-                    <textarea id="chatInput" rows="1" placeholder="Ask me anything about your portal data…"></textarea>
-                    <button class="btn accent" id="sendChatBtn">Send</button>
+                    <div class="ai-attached-files" id="aiAttachedFiles" style="display:none;"></div>
+                    <div class="ai-input-row">
+                        <label class="ai-file-label" for="aiFileInput" title="Attach a file">📎</label>
+                        <textarea id="chatInput" rows="1" placeholder="Ask me anything about your portal data…"></textarea>
+                        <input type="file" id="aiFileInput" multiple style="display:none;">
+                        <button class="btn accent" id="sendChatBtn">Send</button>
+                    </div>
                 </div>
             </div>`;
                 }
@@ -1951,8 +2010,13 @@
                     ${messages}
                 </div>
                 <div class="ai-chat-input-area">
-                    <textarea id="chatInput" rows="1" placeholder="Ask a follow-up or something new…"></textarea>
-                    <button class="btn accent" id="sendChatBtn">Send</button>
+                    <div class="ai-attached-files" id="aiAttachedFiles" style="display:none;"></div>
+                    <div class="ai-input-row">
+                        <label class="ai-file-label" for="aiFileInput" title="Attach a file">📎</label>
+                        <textarea id="chatInput" rows="1" placeholder="Ask me anything about your portal data…"></textarea>
+                        <input type="file" id="aiFileInput" multiple style="display:none;">
+                        <button class="btn accent" id="sendChatBtn">Send</button>
+                    </div>
                 </div>
             </div>`;
             }
@@ -2109,10 +2173,10 @@
   `;
             }
 
-            /* ============ DTA (unchanged) ============ */
+            /* ============ DTA ============ */
             function renderDTA() {
                 return `
-  <p class="section-intro">File a DTA allowance against an approved trip. Advance is computed from grade level and trip length — retire it once you're back with your receipts.</p>
+  <p class="section-intro">File a DTA allowance against an approved trip. Advance is computed from grade level and trip length.</p>
   <div class="panel">
     <div class="panel-head"><div><h3>New DTA request</h3><div class="hint">Link this to an existing travel request where possible</div></div></div>
     <div class="panel-body">
@@ -2126,14 +2190,13 @@
             <select><option>GL-7</option><option>GL-8</option><option>GL-9</option><option>GL-10</option><option>GL-13 (Mgmt)</option></select>
           </div>
         </div>
-        <div class="grid3">
+        <div class="grid2">
           <div class="field"><label>Destination tier</label><select><option>Local — within Nigeria</option><option>International</option></select></div>
           <div class="field"><label>Accommodation</label><select><option>Self-arranged</option><option>Company-booked</option></select></div>
-          <div class="field"><label>Bank account for disbursement</label><input placeholder="Account name / number"></div>
         </div>
         <div class="grid2">
-          <div class="field"><label>Flight ticket <span class="req">*</span></label>${fileBox("dta-flight")}</div>
-          <div class="field"><label>Hotel receipt</label>${fileBox("dta-hotel")}</div>
+          <div class="field"><label>Flight ticket</label>${fileBox("dta-flight")}</div>
+          <div class="field"><label>Hotel receipt <span class="req">*</span></label>${fileBox("dta-hotel")}</div>
         </div>
         <div class="grid2">
           <div class="field"><label>Boarding pass</label>${fileBox("dta-boarding")}</div>
@@ -2157,10 +2220,11 @@
       ],
       true,
   )}
+  <!-- RETIREMENT SECTION — deferred pending Finance sign-off
   <div class="panel">
     <div class="panel-head"><div><h3>Retirement</h3><div class="hint">Reconcile advance vs. actual spend once you're back</div></div></div>
     <div class="panel-body">
-      <p style="color:var(--slate);font-size:13px;margin-top:0;">Once a DTA is marked <span class="stamp paid">paid</span>, it moves here for retirement. Upload final receipts and confirm actual spend — any balance is refunded or topped up automatically, and the difference is logged to <b>Expenses</b>.</p>
+      <p style="color:var(--slate);font-size:13px;margin-top:0;">Once a DTA is marked <span class="stamp paid">paid</span>, it moves here for retirement. Upload final receipts and confirm actual spend — any balance is refunded or topped up, and the difference is auto-logged to Expenses.</p>
       <table>
         <thead><tr><th>Reference</th><th>Staff</th><th>Advance</th><th>Actual spend</th><th>Balance</th><th>Status</th></tr></thead>
         <tbody>
@@ -2169,10 +2233,11 @@
       </table>
     </div>
   </div>
+  -->
   `;
             }
 
-            /* ============ HARDWARE (unchanged) ============ */
+            /* ============ HARDWARE ============ */
             function renderHardware() {
                 return `
   <p class="section-intro">Request new equipment, repairs, or software access — Microsoft 365, Udemy, Coursera and the like. IT and Procurement pick it up from here.</p>
@@ -2190,13 +2255,13 @@
               <option>New equipment</option><option>Repair</option><option>Replacement</option>
             </select>
           </div>
-          <div class="field"><label>Item <span class="req">*</span></label><input required placeholder="e.g. Laptop, UPS, headset"></div>
+          <div class="field"><label id="hwItemLabel">Item <span class="req">*</span></label><input required id="hwItemInput" placeholder="e.g. Laptop, UPS, headset"></div>
         </div>
         <div class="grid2">
           <div class="field"><label>Justification <span class="req">*</span></label><input required placeholder="Why you need this"></div>
           <div class="field"><label>Urgency</label><select><option>Normal</option><option>High</option><option>Critical — work blocked</option></select></div>
         </div>
-        <div class="field"><label>Cost center</label><input placeholder="e.g. PM-OPS-04"></div>
+        <!-- Cost centre is assigned by the PM approver, not the requester -->
         <button class="btn accent" type="submit">Submit request</button>
       </form>
     </div>
@@ -2246,23 +2311,47 @@
   `;
             }
 
-            /* ============ HMO (unchanged) ============ */
+            /* ============ HMO ============ */
             function renderHMO() {
                 return `
-  <p class="section-intro">Enrol on the company HMO plan, add a dependant like a spouse or child, or flag an issue with a claim.</p>
+  <p class="section-intro">Enrol on the company HMO plan, add a dependant, request support or a loan, or flag an issue with a claim.</p>
   <div class="panel">
     <div class="panel-head"><div><h3>New HMO request</h3></div></div>
     <div class="panel-body">
       <form id="hmoForm">
         <div class="field"><label>Request type <span class="req">*</span></label>
-          <select required><option>New enrolment</option><option>Add dependant — spouse</option><option>Add dependant — child</option><option>Change plan / provider</option><option>Report a claim issue</option></select>
+          <select required id="hmoTypeSelect" onchange="
+            var isLoan = this.value === 'Support / Loan Request';
+            var isDep  = this.value === 'Add Dependant';
+            document.getElementById('hmoLoanRow').style.display  = isLoan ? 'block' : 'none';
+            document.getElementById('hmoDependantRow').style.display = isDep  ? 'block' : 'none';
+          ">
+            <option>New enrolment</option>
+            <option>Add Dependant</option>
+            <option>Change plan / provider</option>
+            <option>Report a claim issue</option>
+            <option>Support / Loan Request</option>
+          </select>
         </div>
-        <div class="grid3">
-          <div class="field"><label>Dependant full name</label><input placeholder="If adding a dependant"></div>
-          <div class="field"><label>Relationship</label><select><option>—</option><option>Spouse</option><option>Child</option></select></div>
-          <div class="field"><label>Date of birth</label><input type="date"></div>
+
+        <!-- Dependant fields — shown only when "Add Dependant" is selected -->
+        <div id="hmoDependantRow" style="display:none;">
+          <div class="grid2">
+            <div class="field"><label>Dependant full name</label><input placeholder="Full name of dependant"></div>
+            <div class="field"><label>Relationship</label><select><option>Spouse</option><option>Child</option></select></div>
+          </div>
         </div>
-        <div class="field"><label>Supporting document</label>${fileBox("hmo-doc")}<div class="field-hint">Marriage certificate or birth certificate, where applicable.</div></div>
+
+        <!-- Loan/support amount — shown only when "Support / Loan Request" is selected -->
+        <div id="hmoLoanRow" style="display:none;">
+          <div class="field"><label>Support / Loan Amount (₦) <span class="req">*</span></label><input type="number" id="hmoLoanAmount" placeholder="e.g. 150000" min="0"></div>
+        </div>
+
+        <div class="field">
+          <label>Supporting documents</label>
+          ${fileBox("hmo-doc", true)}
+          <div class="field-hint">Upload all relevant documents (marriage/birth certificate, medical receipts, etc.). Multiple files accepted.</div>
+        </div>
         <button class="btn accent" type="submit">Submit request</button>
       </form>
     </div>
@@ -2286,7 +2375,11 @@
     <div class="panel-body">
       <form id="reportForm">
         <div class="grid3">
-          <div class="field"><label>Department <span class="req">*</span></label><input required placeholder="e.g. Project Management"></div>
+          <div class="field">
+            <label>Department</label>
+            <input value="Server and Cloud Unit" readonly style="background:var(--paper-deep);color:var(--slate);cursor:default;" title="Populated from your user session">
+            <div class="field-hint">Auto-populated from your department profile.</div>
+          </div>
           <div class="field"><label>Period type <span class="req">*</span></label><select required><option>Monthly</option><option>Quarterly</option><option>Yearly</option></select></div>
           <div class="field"><label>Period <span class="req">*</span></label><input required placeholder="e.g. Q3 2026"></div>
         </div>
@@ -2403,10 +2496,10 @@
             }
 
             /* ============ FILE BOX HELPER ============ */
-            function fileBox(id) {
+            function fileBox(id, multiple) {
                 return `<div class="filebox" id="${id}" onclick="document.getElementById('${id}-input').click()">
-    Click to attach, or drop file here
-    <input type="file" id="${id}-input">
+    Click to attach${multiple ? ", or drop files here" : ", or drop file here"}
+    <input type="file" id="${id}-input"${multiple ? " multiple" : ""}>
   </div>`;
             }
             function wireFileBoxes(root) {
@@ -2415,8 +2508,10 @@
                     input.addEventListener("change", () => {
                         if (input.files.length) {
                             box.classList.add("has-file");
-                            box.childNodes[0].textContent =
-                                "✓ " + input.files[0].name;
+                            const label = input.multiple && input.files.length > 1
+                                ? `✓ ${input.files.length} files attached`
+                                : `✓ ${input.files[0].name}`;
+                            box.childNodes[0].textContent = label;
                         }
                     });
                 });
@@ -2457,7 +2552,21 @@
                             }
                         });
                     });
-                }
+                    // File attach (mock — shows chip preview only)
+                    const fileInput = document.getElementById("aiFileInput");
+                    const attachedFiles = document.getElementById("aiAttachedFiles");
+                    if (fileInput && attachedFiles) {
+                        fileInput.addEventListener("change", () => {
+                            const files = Array.from(fileInput.files);
+                            if (!files.length) return;
+                            attachedFiles.style.display = "block";
+                            attachedFiles.innerHTML = files.map(f => `
+                                <span class="ai-file-chip">📄 ${f.name} <span class="rm" onclick="this.closest('.ai-file-chip').remove(); if(!document.querySelector('.ai-file-chip')) document.getElementById('aiAttachedFiles').style.display='none';">×</span></span>
+                            `).join("");
+                            fileInput.value = "";
+                        });
+                    }
+                } // end if view === "ai"
 
                 // Hardware toggle
                 const hwToggle = document.getElementById("hwToggle");
@@ -2470,6 +2579,21 @@
                             .forEach((b) =>
                                 b.classList.toggle("active", b === btn),
                             );
+                        const mode = btn.dataset.mode;
+                        const hwType = document.getElementById("hwType");
+                        const hwItemLabel = document.getElementById("hwItemLabel");
+                        const hwItemInput = document.getElementById("hwItemInput");
+                        if (hwType) {
+                            if (mode === "software") {
+                                hwType.innerHTML = `<option>New Software License</option><option>Microsoft 365</option><option>Coursera Course Access</option><option>Udemy Course Access</option><option>Software Upgrade / Renewal</option>`;
+                                if (hwItemLabel) hwItemLabel.innerHTML = `Software / Course name <span class="req">*</span>`;
+                                if (hwItemInput) hwItemInput.placeholder = "e.g. Microsoft 365, Coursera PM course";
+                            } else {
+                                hwType.innerHTML = `<option>New equipment</option><option>Repair</option><option>Replacement</option>`;
+                                if (hwItemLabel) hwItemLabel.innerHTML = `Item <span class="req">*</span>`;
+                                if (hwItemInput) hwItemInput.placeholder = "e.g. Laptop, UPS, headset";
+                            }
+                        }
                     });
                 }
 
